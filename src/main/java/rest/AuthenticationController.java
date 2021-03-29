@@ -1,6 +1,10 @@
 package rest;
 
 import dto.AuthenticationRequestDto;
+import dto.UserAddRoleDto;
+import dto.UserCreateDto;
+import models.Role;
+import models.Status;
 import models.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,12 +14,14 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import repositories.RoleRepository;
 import repositories.UserRepository;
 import security.jwt.JwtTokenProvider;
 import service.UserService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,24 +56,49 @@ public class AuthenticationController {
         return body.getUsername() + " " + body.getPassword();
     }
 
-    @PostMapping("make_admin")
-    public String makeAdmin(@RequestBody AuthenticationRequestDto body) {
+    // TODO: permit only for admin or superadmin
+    @PostMapping("add_role")
+    public ResponseEntity<?> addRole(@RequestBody UserAddRoleDto body) {
         User user = userService.findByUsername(body.getUsername());
-        user.getRoles().add(roleRepository.findByName("ROLE_ADMIN"));
-        return "OK";
+        Role role_admin = roleRepository.findByName("ROLE_ADMIN");
+        Role role_user = roleRepository.findByName("ROLE_USER");
+
+        if (body.getRole().equals("admin")       && !user.getRoles().contains(role_admin)) {
+            user.getRoles().add(role_admin);
+        } else if (body.getRole().equals("user") && !user.getRoles().contains(role_user)) {
+            user.getRoles().add(role_user);
+        }
+
+        userRepository.save(user);
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "OK");
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("sign_up")
+    public ResponseEntity<?> signUp(@RequestBody UserCreateDto userCreateDto) {
+        String username = userCreateDto.getUsername();
+        Map<String, String> response = new HashMap<>();
+
+        if (userRepository.findByUsername(username) != null) {
+            response.put("status", "User with this username already exists");
+            return ResponseEntity.ok(response);
+        }
+
+        userRepository.save(userCreateDto.toUser(roleRepository));
+
+        response.put("status", "OK");
+        response.put("username", username);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("login")
     public ResponseEntity<?> login(@RequestBody AuthenticationRequestDto requestDto) {
         try {
             String username = requestDto.getUsername();
-            log.info("=========== Trying to login: " + username + " " + requestDto.getPassword());
 
-            UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(username, requestDto.getPassword());
-            log.info("=========== AuthenticationToken: " + authenticationToken);
-            authenticationManager.authenticate(authenticationToken);
-            log.info("=========== AuthenticationManager: success");
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(username, requestDto.getPassword()));
 
             User user = userService.findByUsername(username);
             if (user == null) {
@@ -75,15 +106,14 @@ public class AuthenticationController {
             }
 
             // TESTING
-            if (username.equals("root")) {
-                user.getRoles().add(roleRepository.findByName("ROLE_ADMIN"));
-            } else {
-                user.getRoles().add(roleRepository.findByName("ROLE_USER"));
-            }
-            userRepository.save(user);
+//            if (username.equals("root")) {
+//                user.getRoles().add(roleRepository.findByName("ROLE_ADMIN"));
+//            } else {
+//                user.getRoles().add(roleRepository.findByName("ROLE_USER"));
+//            }
+//            userRepository.save(user);
             // END TESTING
-
-            log.info("=========== Roles of user " + username + " updated: " + user.getRoles());
+//            log.info("=========== Roles of user " + username + " updated: " + user.getRoles());
 
             String token = jwtTokenProvider.createToken(username);
 
