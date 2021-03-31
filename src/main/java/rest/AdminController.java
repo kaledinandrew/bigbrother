@@ -26,6 +26,11 @@ public class AdminController {
         this.userRepository = userRepository;
     }
 
+    @GetMapping(value = "hello")
+    public String hello() {
+        return "hello, admin";
+    }
+
     @GetMapping(value = "users")
     public ResponseEntity<List<UserDto>> getAllUsers() {
         return new ResponseEntity<>(

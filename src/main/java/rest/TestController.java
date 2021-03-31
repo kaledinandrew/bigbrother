@@ -2,6 +2,7 @@ package rest;
 
 import dto.AuthenticationRequestDto;
 import dto.UserDto;
+import models.Role;
 import models.Status;
 import models.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +11,7 @@ import repositories.EventRepository;
 import repositories.RoleRepository;
 import repositories.UserRepository;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -33,7 +32,7 @@ public class TestController {
 
     @RequestMapping("/hello")
     public String helloPage() {
-        return "Hello!";
+        return "hello, someone";
     }
 
     @PostMapping("/post_user")
@@ -63,5 +62,24 @@ public class TestController {
         user.getRoles().add(roleRepository.findByName("ROLE_ADMIN"));
         userRepository.save(user);
         return userDto;
+    }
+
+    @PostMapping("/create_super_admin")
+    public String createSuperAdmin() {
+        User user = userRepository.findByUsername("super_admin");
+        if (!user.getRoles().contains(roleRepository.findByName("ROLE_SUPER_ADMIN"))) {
+            user.getRoles().add(roleRepository.findByName("ROLE_SUPER_ADMIN"));
+        }
+        userRepository.save(user);
+        return "OK";
+    }
+
+    @PostMapping("/clean_up_user_roles")
+    public String cleanUpUserRoles() {
+        for (User user : userRepository.findAll()) {
+            user.setRoles(new ArrayList<>(new HashSet<>(user.getRoles())));
+            userRepository.save(user);
+        }
+        return "OK";
     }
 }

@@ -2,6 +2,7 @@ package dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import models.Role;
 import models.Status;
 import models.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class UserCreateDto {
     private String password;
     private String role;
 
-    public User toUser(RoleRepository roleRepository) {
+    public User toUser(Role role) {
         User user = new User();
         user.setUsername(username);
         user.setFirstName(firstName);
@@ -28,11 +29,7 @@ public class UserCreateDto {
         user.setPassword(new BCryptPasswordEncoder().encode(password));
 
         user.setRoles(new ArrayList<>());
-        if (role.equals("admin")) {
-            user.getRoles().add(roleRepository.findByName("ROLE_ADMIN"));
-        } else {
-            user.getRoles().add(roleRepository.findByName("ROLE_USER"));
-        }
+        user.getRoles().add(role);
 
         user.setStatus(Status.ACTIVE);
         user.setCreated(new Date());

@@ -96,4 +96,21 @@
             <column name="name" value="ROLE_ADMIN"/>
         </insert>
     </changeSet>
+
+    <changeSet id="1.0.46" author="andrew">
+        <insert tableName="roles">
+            <column name="name" value="ROLE_SUPER_ADMIN"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="1.0.47" author="andrew">
+        <insert tableName="users">
+            <column name="username" value="super_admin"/>
+            <column name="first_name" value="super_admin"/>
+            <column name="last_name" value="super_admin"/>
+            <!-- password = super_admin -->
+            <column name="password" value="$2a$04$pgCeGgvEKKqwZ.FUUzcCkO3qzKWV8Gezzh4EFsgT2bzC6Z5TI4ZcO"/>
+            <column name="status" value="ACTIVE"/>
+        </insert>
+    </changeSet>
 </databaseChangeLog>

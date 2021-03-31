@@ -51,6 +51,11 @@ public class AuthenticationController {
         this.userRepository = userRepository;
     }
 
+    @GetMapping("hello")
+    public String hello() {
+        return "hello on /auth endpoint";
+    }
+
     @PostMapping("test")
     public String testController(@RequestBody AuthenticationRequestDto body) {
         return body.getUsername() + " " + body.getPassword();
@@ -85,7 +90,7 @@ public class AuthenticationController {
             return ResponseEntity.ok(response);
         }
 
-        userRepository.save(userCreateDto.toUser(roleRepository));
+        // userRepository.save(userCreateDto.toUser(roleRepository));
 
         response.put("status", "OK");
         response.put("username", username);
