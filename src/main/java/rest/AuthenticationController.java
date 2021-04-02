@@ -4,24 +4,20 @@ import dto.AuthenticationRequestDto;
 import dto.UserAddRoleDto;
 import dto.UserCreateDto;
 import models.Role;
-import models.Status;
 import models.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import repositories.RoleRepository;
 import repositories.UserRepository;
 import security.jwt.JwtTokenProvider;
 import service.UserService;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -99,9 +95,9 @@ public class AuthenticationController {
 
     @PostMapping("login")
     public ResponseEntity<?> login(@RequestBody AuthenticationRequestDto requestDto) {
+        Map<Object, Object> response = new HashMap<>();
         try {
             String username = requestDto.getUsername();
-
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, requestDto.getPassword()));
 
@@ -110,25 +106,15 @@ public class AuthenticationController {
                 throw new UsernameNotFoundException("User with username: " + username + " not found");
             }
 
-            // TESTING
-//            if (username.equals("root")) {
-//                user.getRoles().add(roleRepository.findByName("ROLE_ADMIN"));
-//            } else {
-//                user.getRoles().add(roleRepository.findByName("ROLE_USER"));
-//            }
-//            userRepository.save(user);
-            // END TESTING
-//            log.info("=========== Roles of user " + username + " updated: " + user.getRoles());
-
             String token = jwtTokenProvider.createToken(username);
 
-            Map<Object, Object> response = new HashMap<>();
             response.put("username", username);
             response.put("token", token);
-
             return ResponseEntity.ok(response);
         } catch (AuthenticationException e) {
-            throw new BadCredentialsException("Invalid username or password");
+            // throw new BadCredentialsException("Invalid username or password");
+            response.put("status", "Exception while authenticating: Invalid username or password");
+            return ResponseEntity.ok(response);
         }
     }
 }
