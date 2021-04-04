@@ -9,7 +9,7 @@ Authentication is done via Json Web Token. Firstly, the user sends username and 
 KEY: Authorization \
 VALUE: Bearer TOKEN_NUMBER
 
-If token is invalid or expired, user has to resend his username and password, to get a new token.
+If token is invalid or expired, user has to resend his username and password to get a new token.
 
 ## Endpoints:
 
