@@ -2,6 +2,15 @@
 
 Spring REST API for course project at HSE
 
+## JWT
+
+Authentication is done via Json Web Token. Firstly, the user sends username and password and gets the token. Then he adds this token to the **header** of all his requests:
+
+KEY: Authorization \
+VALUE: Bearer TOKEN_NUMBER
+
+If token is invalid or expired, user has to resend his username and password, to get a new token.
+
 ## Endpoints:
 
 ### /auth
