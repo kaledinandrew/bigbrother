@@ -43,14 +43,6 @@
                 <constraints nullable="false" unique="true"/>
             </column>
 
-            <column name="created" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()">
-                <constraints nullable="false"/>
-            </column>
-
-            <column name="updated" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()">
-                <constraints nullable="false"/>
-            </column>
-
             <column name="status" type="VARCHAR(25)" defaultValue="ACTIVE">
                 <constraints nullable="false"/>
             </column>
@@ -111,6 +103,13 @@
             <!-- password = super_admin -->
             <column name="password" value="$2a$04$pgCeGgvEKKqwZ.FUUzcCkO3qzKWV8Gezzh4EFsgT2bzC6Z5TI4ZcO"/>
             <column name="status" value="ACTIVE"/>
+        </insert>
+    </changeSet>
+    
+    <changeSet id="1.0.48" author="andrew">
+        <insert tableName="user_roles">
+            <column name="user_id" value="1"/>
+            <column name="role_id" value="3"/>
         </insert>
     </changeSet>
 </databaseChangeLog>

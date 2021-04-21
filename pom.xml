@@ -81,6 +81,13 @@
 			<version>2.4.2</version>
 		</dependency>
 
+		<!-- PostgreSQL -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
 		<!-- JSON Web Token lib -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
