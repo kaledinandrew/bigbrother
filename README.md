@@ -15,13 +15,13 @@ If token is invalid or expired, user has to resend his username and password to 
 
 ### /auth
 
-- [/login](####/auth/login)
+- [/login](#/auth/login)
 
 ### /super_admin
 
-- [/all_admins](####/all_admin)
-- [/add_admin](####/add_admin)
-- [/edit_admin](####/edit_admin?id=10)
+- [/all_admins](#/all_admin)
+- [/add_admin](#/add_admin)
+- [/edit_admin](#/edit_admin?id=10)
 
 ## Endpoints:
 
