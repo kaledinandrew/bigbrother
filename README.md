@@ -11,11 +11,20 @@ VALUE: Bearer TOKEN_NUMBER
 
 If token is invalid or expired, user has to resend his username and password to get a new token.
 
+## Table of contents:
+
+### /auth
+
+#### [/auth/login] (#/auth/login)
+
 ## Endpoints:
 
 ### /auth
 
-#### /login - POST
+#### /auth/login
+
+##### Type:
+POST
 
 ##### Input:
 
