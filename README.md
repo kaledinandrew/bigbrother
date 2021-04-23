@@ -19,9 +19,15 @@ If token is invalid or expired, user has to resend his username and password to 
 
 ### /super_admin
 
-- [/all_admins](#all_admin)
+- [/all_admins](#all_admins)
 - [/add_admin](#add_admin)
-- [/edit_admin](#edit_admin?id=10)
+- [/edit_admin](#edit_adminid10)
+- [/delete_admin](#delete_adminid10)
+
+### /admin
+
+- [/all_users](#all_users)
+- [/user?id=3](#userid3)
 
 ## Endpoints:
 
@@ -160,7 +166,10 @@ PUT
 ```
 
 
-#### /delete_admin?id=10 - DELETE
+#### /delete_admin?id=10
+
+##### Type:
+DELETE
 
 ##### Output on success:
 
@@ -181,7 +190,10 @@ PUT
 
 ### /admin
 
-#### /all_users - GET
+#### /all_users
+
+##### Type:
+GET
 
 ##### Output on success:
 
@@ -208,7 +220,10 @@ PUT
 ]
 ```
 
-#### /user?id=3 - GET
+#### /user?id=3
+
+##### Type:
+GET
 
 ##### Output on success:
 
