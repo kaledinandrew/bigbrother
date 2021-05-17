@@ -2,11 +2,13 @@ package rest;
 
 import dto.AuthenticationRequestDto;
 import dto.UserDto;
+import models.Attr;
 import models.Role;
 import models.Status;
 import models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import repositories.AttrRepository;
 import repositories.EventRepository;
 import repositories.RoleRepository;
 import repositories.UserRepository;
@@ -20,14 +22,17 @@ public class TestController {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final EventRepository eventRepository;
+    private final AttrRepository attrRepository;
 
     @Autowired
     public TestController(UserRepository userRepository,
                           RoleRepository roleRepository,
-                          EventRepository eventRepository) {
+                          EventRepository eventRepository,
+                          AttrRepository attrRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.eventRepository = eventRepository;
+        this.attrRepository = attrRepository;
     }
 
     @RequestMapping("/hello")
@@ -77,9 +82,31 @@ public class TestController {
     @PostMapping("/clean_up_user_roles")
     public String cleanUpUserRoles() {
         for (User user : userRepository.findAll()) {
-            user.setRoles(new ArrayList<>(new HashSet<>(user.getRoles())));
+            user.setRoles(new HashSet<>(user.getRoles()));
             userRepository.save(user);
         }
         return "OK";
+    }
+
+    @RequestMapping("/add_attr")
+    public String addAttr() {
+        Attr new_attr = new Attr("test_attr");
+        attrRepository.save(new_attr);
+        return attrRepository.findAll().toString();
+    }
+
+    @RequestMapping("/add_attr_to_user1")
+    public String addAttrToUser() {
+        String attr_name = "for_user1";
+        Attr new_attr = attrRepository.findByName(attr_name);
+        if (new_attr == null) {
+            new_attr = new Attr(attr_name);
+            attrRepository.save(new_attr);
+        }
+
+        User user1 = userRepository.findById(1L).get();
+        user1.addAttr(new_attr);
+        userRepository.save(user1);
+        return user1.getAttrs().toString();
     }
 }

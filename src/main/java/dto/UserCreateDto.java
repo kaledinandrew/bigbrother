@@ -11,6 +11,8 @@ import repositories.RoleRepository;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -28,7 +30,7 @@ public class UserCreateDto {
         user.setLastName(lastName);
         user.setPassword(new BCryptPasswordEncoder().encode(password));
 
-        user.setRoles(new ArrayList<>());
+        user.setRoles(new HashSet<>());
         user.getRoles().add(role);
 
         user.setStatus(Status.ACTIVE);

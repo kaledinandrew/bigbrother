@@ -11,6 +11,7 @@ import repositories.RoleRepository;
 import repositories.UserRepository;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +37,7 @@ public class UserServiceImpl implements UserService {
         userRoles.add(roleUser);
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRoles(userRoles);
+        user.setRoles(new HashSet<>(userRoles));
         user.setStatus(Status.ACTIVE);
 
         User registeredUser = userRepository.save(user);

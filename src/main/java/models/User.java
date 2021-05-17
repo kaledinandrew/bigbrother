@@ -8,6 +8,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -30,7 +31,13 @@ public class User extends BaseEntity{
     @JoinTable(name = "user_roles",
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")})
-    private List<Role> roles;
+    private Set<Role> roles;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_attrs",
+            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "attr_id", referencedColumnName = "id")})
+    private Set<Attr> attrs;
 
     public void editUser(UserCreateDto dto) {
         if (!username.equals(dto.getUsername())) {
@@ -44,5 +51,22 @@ public class User extends BaseEntity{
         }
         this.password = new BCryptPasswordEncoder().encode(dto.getPassword());
         this.updated = new Date();
+    }
+
+    public void addAttr(Attr toAdd) {
+        if (!attrs.contains(toAdd)) {
+            this.attrs.add(toAdd);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 }

@@ -4,7 +4,7 @@
                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
 
-    <changeSet id="1.0.40" author="andrew">
+    <changeSet id="1.0.50" author="andrew">
         <createTable tableName="users">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -33,7 +33,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="1.0.41" author="andrew">
+    <changeSet id="1.0.51" author="andrew">
         <createTable tableName="roles">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -49,7 +49,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="1.0.42" author="andrew">
+    <changeSet id="1.0.52" author="andrew">
         <createTable tableName="user_roles">
             <column name="user_id" type="BIGINT">
             </column>
@@ -59,7 +59,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="1.0.43" author="andrew">
+    <changeSet id="1.0.53" author="andrew">
         <addForeignKeyConstraint baseColumnNames="user_id"
                                  baseTableName="user_roles"
                                  constraintName="fk_user_roles_user"
@@ -69,7 +69,7 @@
                                  referencedTableName="users"/>
     </changeSet>
 
-    <changeSet id="1.0.44" author="andrew">
+    <changeSet id="1.0.54" author="andrew">
         <addForeignKeyConstraint baseColumnNames="role_id"
                                  baseTableName="user_roles"
                                  constraintName="fk_user_roles_roles"
@@ -79,7 +79,7 @@
                                  referencedTableName="roles"/>
     </changeSet>
 
-    <changeSet id="1.0.45" author="andrew">
+    <changeSet id="1.0.55" author="andrew">
         <insert tableName="roles">
             <column name="name" value="ROLE_USER"/>
         </insert>
@@ -89,13 +89,13 @@
         </insert>
     </changeSet>
 
-    <changeSet id="1.0.46" author="andrew">
+    <changeSet id="1.0.56" author="andrew">
         <insert tableName="roles">
             <column name="name" value="ROLE_SUPER_ADMIN"/>
         </insert>
     </changeSet>
 
-    <changeSet id="1.0.47" author="andrew">
+    <changeSet id="1.0.57" author="andrew">
         <insert tableName="users">
             <column name="username" value="super_admin"/>
             <column name="first_name" value="super_admin"/>
@@ -106,10 +106,58 @@
         </insert>
     </changeSet>
     
-    <changeSet id="1.0.48" author="andrew">
+    <changeSet id="1.0.58" author="andrew">
         <insert tableName="user_roles">
             <column name="user_id" value="1"/>
             <column name="role_id" value="3"/>
         </insert>
+    </changeSet>
+
+    <!-- Attributes -->
+
+    <changeSet id="1.0.59" author="andrew">
+        <createTable tableName="attrs">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="name" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+
+            <column name="status" type="VARCHAR(25)" defaultValue="ACTIVE">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1.0.510" author="andrew">
+        <createTable tableName="user_attrs">
+            <column name="user_id" type="BIGINT">
+            </column>
+
+            <column name="attr_id" type="BIGINT">
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1.0.511" author="andrew">
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="user_attrs"
+                                 constraintName="fk_user_attrs_user"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="users"/>
+    </changeSet>
+
+    <changeSet id="1.0.512" author="andrew">
+        <addForeignKeyConstraint baseColumnNames="attr_id"
+                                 baseTableName="user_attrs"
+                                 constraintName="fk_user_attrs_attr"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="attrs"/>
     </changeSet>
 </databaseChangeLog>
