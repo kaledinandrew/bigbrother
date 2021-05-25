@@ -2,6 +2,7 @@ package models;
 
 import dto.UserCreateDto;
 import lombok.Data;
+import models.scripts.BaseScript;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.*;
@@ -39,6 +40,12 @@ public class User extends BaseEntity{
             inverseJoinColumns = {@JoinColumn(name = "attr_id", referencedColumnName = "id")})
     private Set<Attr> attrs;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_scripts",
+            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "script_id", referencedColumnName = "id")})
+    private Set<BaseScript> scripts;
+
     public void editUser(UserCreateDto dto) {
         if (!username.equals(dto.getUsername())) {
             this.username = dto.getUsername();
@@ -56,6 +63,12 @@ public class User extends BaseEntity{
     public void addAttr(Attr toAdd) {
         if (!attrs.contains(toAdd)) {
             this.attrs.add(toAdd);
+        }
+    }
+
+    public void addScript(BaseScript toAdd) {
+        if (!scripts.contains(toAdd)) {
+            this.scripts.add(toAdd);
         }
     }
 

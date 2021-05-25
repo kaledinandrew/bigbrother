@@ -5,11 +5,13 @@ import dto.UserCreateDto;
 import dto.UserDto;
 import models.Attr;
 import models.User;
+import models.scripts.BaseScript;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import repositories.AttrRepository;
+import repositories.BaseScriptRepository;
 import repositories.RoleRepository;
 import repositories.UserRepository;
 import service.UserService;
@@ -26,14 +28,17 @@ public class AdminController {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final AttrRepository attrRepository;
+    private final BaseScriptRepository scriptRepository;
 
     @Autowired
     public AdminController(UserRepository userRepository,
                            RoleRepository roleRepository,
-                           AttrRepository attrRepository) {
+                           AttrRepository attrRepository,
+                           BaseScriptRepository scriptRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.attrRepository = attrRepository;
+        this.scriptRepository = scriptRepository;
     }
 
     // @GetMapping(value = "hello")
@@ -186,5 +191,15 @@ public class AdminController {
         userRepository.save(user);
         response.put("status", "OK");
         return ResponseEntity.ok(response);
+    }
+
+    // SCRIPTS
+
+    // TODO: check returning children
+    @RequestMapping(value = "all_scripts")
+    public ResponseEntity<List<BaseScript>> getAllScripts() {
+        return new ResponseEntity<>(
+                scriptRepository.findAll(),
+                HttpStatus.OK);
     }
 }

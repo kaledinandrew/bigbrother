@@ -160,4 +160,39 @@
                                  referencedColumnNames="id"
                                  referencedTableName="attrs"/>
     </changeSet>
+
+    <!-- Scripts -->
+
+    <!--
+    <changeSet id="1.0.513" author="andrew">
+        <createTable tableName="count_contacts">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="script_name" type="VARCHAR(250)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="id1" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="id2" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="count" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="status" type="VARCHAR(25)" defaultValue="ACTIVE">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+    </changeSet>
+    -->
+
+
 </databaseChangeLog>

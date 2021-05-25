@@ -1,17 +1,18 @@
 package rest;
 
+import dto.AttrDto;
 import dto.AuthenticationRequestDto;
 import dto.UserDto;
 import models.Attr;
 import models.Role;
 import models.Status;
 import models.User;
+import models.scripts.CountContactsScript;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import repositories.AttrRepository;
-import repositories.EventRepository;
-import repositories.RoleRepository;
-import repositories.UserRepository;
+import repositories.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,16 +24,19 @@ public class TestController {
     private final RoleRepository roleRepository;
     private final EventRepository eventRepository;
     private final AttrRepository attrRepository;
+    private final BaseScriptRepository scriptRepository;
 
     @Autowired
     public TestController(UserRepository userRepository,
                           RoleRepository roleRepository,
                           EventRepository eventRepository,
-                          AttrRepository attrRepository) {
+                          AttrRepository attrRepository,
+                          BaseScriptRepository scriptRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.eventRepository = eventRepository;
         this.attrRepository = attrRepository;
+        this.scriptRepository = scriptRepository;
     }
 
     @RequestMapping("/hello")
@@ -108,5 +112,36 @@ public class TestController {
         user1.addAttr(new_attr);
         userRepository.save(user1);
         return user1.getAttrs().toString();
+    }
+
+    // =================================================
+
+    @RequestMapping("/all_scripts")
+    public String getAllScripts() {
+        return scriptRepository.findAll().toString();
+    }
+
+    @RequestMapping("/add_random_script")
+    public String addRandomScript() {
+        Random random = new Random();
+        scriptRepository.save(
+                new CountContactsScript("random_script", random.nextLong(), random.nextLong())
+        );
+        return getAllScripts();
+    }
+
+    @RequestMapping("add_script1_to_user1")
+    public String addScript1ToUser1() {
+        User user = userRepository.findById(1L).orElse(null);
+        user.addScript(scriptRepository.findById(1L).orElse(null));
+        userRepository.save(user);
+        return "OK";
+    }
+
+    // =================================================
+
+    @RequestMapping(value = "return_error")
+    public ResponseEntity<List<AttrDto>> getAllAttrs() {
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 }
