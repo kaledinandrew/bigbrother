@@ -66,9 +66,21 @@ public class User extends BaseEntity{
         }
     }
 
+    public void removeAttr(Attr attr) {
+        if (attrs.contains(attr)) {
+            this.attrs.remove(attr);
+        }
+    }
+
     public void addScript(BaseScript toAdd) {
         if (!scripts.contains(toAdd)) {
             this.scripts.add(toAdd);
+        }
+    }
+
+    public void removeScript(BaseScript script) {
+        if (scripts.contains(script)) {
+            this.scripts.remove(script);
         }
     }
 

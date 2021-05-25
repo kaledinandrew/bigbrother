@@ -4,10 +4,10 @@ import dto.AttrDto;
 import dto.AuthenticationRequestDto;
 import dto.UserDto;
 import models.Attr;
-import models.Role;
 import models.Status;
 import models.User;
-import models.scripts.CountContactsScript;
+import models.scripts.CountContactScript;
+import models.scripts.TimeIntervalContactScript;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -121,11 +121,25 @@ public class TestController {
         return scriptRepository.findAll().toString();
     }
 
-    @RequestMapping("/add_random_script")
-    public String addRandomScript() {
+    @RequestMapping("/add_random_count_script")
+    public String addRandomCountScript() {
         Random random = new Random();
         scriptRepository.save(
-                new CountContactsScript("random_script", random.nextLong(), random.nextLong())
+                new CountContactScript("random_count", random.nextLong(), random.nextLong())
+        );
+        return getAllScripts();
+    }
+
+    @RequestMapping("/add_random_interval_script")
+    public String addRandomIntervalScript() {
+        Random random = new Random();
+        scriptRepository.save(
+                new TimeIntervalContactScript("random_interval",
+                        (long) random.nextInt(100),
+                        (long) random.nextInt(100),
+                        (long) random.nextInt(100),
+                        (long) random.nextInt(100)
+                )
         );
         return getAllScripts();
     }

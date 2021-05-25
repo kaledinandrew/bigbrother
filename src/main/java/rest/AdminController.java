@@ -1,11 +1,16 @@
 package rest;
 
+import com.fasterxml.jackson.databind.ser.Serializers;
 import dto.AttrDto;
 import dto.UserCreateDto;
 import dto.UserDto;
+import dto.scripts.CountContactScriptDto;
+import dto.scripts.TimeIntervalContactScriptDto;
 import models.Attr;
 import models.User;
 import models.scripts.BaseScript;
+import models.scripts.CountContactScript;
+import models.scripts.TimeIntervalContactScript;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -195,11 +200,149 @@ public class AdminController {
 
     // SCRIPTS
 
-    // TODO: check returning children
     @RequestMapping(value = "all_scripts")
-    public ResponseEntity<List<BaseScript>> getAllScripts() {
+    public ResponseEntity<List<?>> getAllScripts() {
         return new ResponseEntity<>(
-                scriptRepository.findAll(),
+                scriptRepository.findAll().stream().map(BaseScript::toChild).collect(Collectors.toList()),
                 HttpStatus.OK);
+    }
+
+    // TODO add scripts to users in these functions
+    // TODO add new script to this admin
+
+    @RequestMapping(value = "add_count_script")
+    public ResponseEntity<?> addCountScript(@RequestBody CountContactScriptDto countDto) {
+        Map<String, String> response = new HashMap<>();
+
+        if (userRepository.findById(countDto.getId1()).isEmpty() ||
+            userRepository.findById(countDto.getId2()).isEmpty()) {
+            response.put("status", "invalid users id");
+            return ResponseEntity.ok(response);
+        }
+
+        scriptRepository.save(new CountContactScript(countDto));
+
+        response.put("status", "OK");
+        response.put("script_name", countDto.getScriptName());
+        return ResponseEntity.ok(response);
+    }
+
+    @RequestMapping(value = "edit_count_script")
+    public ResponseEntity<?> editCountScript(@RequestParam(name = "id") Long id,
+                                      @RequestBody CountContactScriptDto countDto) {
+        BaseScript script = scriptRepository.findById(id).orElse(null);
+        Map<String, String> response = new HashMap<>();
+
+        if (script == null) {
+            response.put("status", "no script with id: " + id);
+            return ResponseEntity.ok(response);
+        }
+        if (!(script instanceof CountContactScript)) {
+            response.put("status", "cannot convert script to CountContactScript by id:" + id);
+            return ResponseEntity.ok(response);
+        }
+
+        script.setScriptName(countDto.getScriptName());
+        script.setId1(countDto.getId1());
+        script.setId2(countDto.getId2());
+        ((CountContactScript) script).setCount(0L);
+        scriptRepository.save(script);
+
+        response.put("status", "OK");
+        response.put("script_name", script.getScriptName());
+        return ResponseEntity.ok(response);
+    }
+
+    @RequestMapping(value = "add_interval_script")
+    public ResponseEntity<?> addIntervalScript(@RequestBody TimeIntervalContactScriptDto scriptDto) {
+        Map<String, String> response = new HashMap<>();
+
+        if (userRepository.findById(scriptDto.getId1()).isEmpty() ||
+                userRepository.findById(scriptDto.getId2()).isEmpty()) {
+            response.put("status", "invalid users id");
+            return ResponseEntity.ok(response);
+        }
+        if (scriptDto.getFrom() <= 0 || scriptDto.getTo() <= 0) {
+            response.put("status", "invalid from or to field");
+            return ResponseEntity.ok(response);
+        }
+
+        scriptRepository.save(new TimeIntervalContactScript(scriptDto));
+
+        response.put("status", "OK");
+        response.put("script_name", scriptDto.getScriptName());
+        return ResponseEntity.ok(response);
+    }
+
+    @RequestMapping(value = "edit_interval_script")
+    public ResponseEntity<?> editIntervalScript(@RequestParam(name = "id") Long id,
+                                             @RequestBody TimeIntervalContactScriptDto scriptDto) {
+        BaseScript script = scriptRepository.findById(id).orElse(null);
+        Map<String, String> response = new HashMap<>();
+
+        if (script == null) {
+            response.put("status", "no script with id: " + id);
+            return ResponseEntity.ok(response);
+        }
+        if (!(script instanceof TimeIntervalContactScript)) {
+            response.put("status", "cannot convert script to TimeIntervalContactScript by id:" + id);
+            return ResponseEntity.ok(response);
+        }
+
+        script.setScriptName(scriptDto.getScriptName());
+        script.setId1(scriptDto.getId1());
+        script.setId2(scriptDto.getId2());
+        ((TimeIntervalContactScript) script).setFrom(scriptDto.getFrom());
+        ((TimeIntervalContactScript) script).setTo(scriptDto.getTo());
+        ((TimeIntervalContactScript) script).setSuccess(scriptDto.getSuccess());
+        scriptRepository.save(script);
+
+        response.put("status", "OK");
+        response.put("script_name", script.getScriptName());
+        return ResponseEntity.ok(response);
+    }
+
+    @RequestMapping(value = "delete_script")
+    public ResponseEntity<?> deleteScriptById(@RequestParam(name = "id") Long id) {
+        BaseScript script = scriptRepository.findById(id).orElse(null);
+        Map<String, String> response = new HashMap<>();
+
+        if (script == null) {
+            response.put("status", "No script with this id");
+            return ResponseEntity.ok(response);
+        }
+
+        User    u1 = userRepository.findById(script.getId1()).orElse(null),
+                u2 = userRepository.findById(script.getId2()).orElse(null);
+        if (u1 == null || u2 == null) {
+            response.put("status", "invalid users id");
+            return ResponseEntity.ok(response);
+        }
+
+        u1.removeScript(script);
+        u2.removeScript(script);
+
+        scriptRepository.deleteById(id);
+        response.put("status", "OK");
+        return ResponseEntity.ok(response);
+    }
+
+    @RequestMapping(value = "add_script_to_user")
+    public ResponseEntity<?> addScriptToUser(@RequestParam(name = "user_id") Long user_id,
+                                           @RequestParam(name = "script_id") Long script_id) {
+        Map<String, String> response = new HashMap<>();
+        if (userRepository.findById(user_id).isEmpty() || attrRepository.findById(script_id).isEmpty()) {
+            response.put("status", "No user or script with such id");
+            return ResponseEntity.ok(response);
+        }
+
+        User user = userRepository.findById(user_id).get();
+        BaseScript script = scriptRepository.findById(script_id).get();
+
+        user.addScript(script);
+        userRepository.save(user);
+
+        response.put("status", "OK");
+        return ResponseEntity.ok(response);
     }
 }

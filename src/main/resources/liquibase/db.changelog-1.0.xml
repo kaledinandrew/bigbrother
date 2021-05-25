@@ -182,7 +182,15 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="count" type="VARCHAR(20)">
+            <column name="from" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="to" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="success" type="VARCHAR(20)">
                 <constraints nullable="false"/>
             </column>
 
@@ -192,7 +200,7 @@
 
         </createTable>
     </changeSet>
-    -->
 
+    -->
 
 </databaseChangeLog>
