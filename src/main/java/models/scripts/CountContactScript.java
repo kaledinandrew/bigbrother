@@ -2,11 +2,13 @@ package models.scripts;
 
 import dto.scripts.CountContactScriptDto;
 import lombok.Data;
+import models.User;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.util.HashSet;
 
 @Entity
 @DiscriminatorValue("1")
@@ -25,11 +27,18 @@ public class CountContactScript extends BaseScript {
         this.count = 0L;
     }
 
-    public CountContactScript(CountContactScriptDto dto) {
+    public CountContactScript(CountContactScriptDto dto, User u1, User u2) {
         this.scriptName = dto.getScriptName();
         this.id1 = dto.getId1();
         this.id2 = dto.getId2();
         this.count = 0L;
+        super.setUsers(new HashSet<>());
+        if (u1 != null) {
+            super.addUser(u1);
+        }
+        if (u2 != null) {
+            super.addUser(u2);
+        }
     }
 
     @Override

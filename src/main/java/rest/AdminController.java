@@ -1,6 +1,5 @@
 package rest;
 
-import com.fasterxml.jackson.databind.ser.Serializers;
 import dto.AttrDto;
 import dto.UserCreateDto;
 import dto.UserDto;
@@ -19,9 +18,9 @@ import repositories.AttrRepository;
 import repositories.BaseScriptRepository;
 import repositories.RoleRepository;
 import repositories.UserRepository;
-import service.UserService;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -75,7 +74,7 @@ public class AdminController {
 
     // @PostMapping(value = "add_user")
     @RequestMapping(value = "add_user")
-    public ResponseEntity<?> addAdmin(@RequestBody UserCreateDto userCreateDto) {
+    public ResponseEntity<?> addUser(@RequestBody UserCreateDto userCreateDto) {
         String username = userCreateDto.getUsername();
         Map<String, String> response = new HashMap<>();
 
@@ -94,7 +93,7 @@ public class AdminController {
 
     // @PutMapping(value = "edit_user")
     @RequestMapping(value = "edit_user")
-    public ResponseEntity<?> editAdmin(@RequestParam(name = "id") Long id,
+    public ResponseEntity<?> editUser(@RequestParam(name = "id") Long id,
                                        @RequestBody UserCreateDto userCreateDto) {
         User user = userRepository.findById(id).orElse(null);
         if (user == null) {
@@ -208,20 +207,25 @@ public class AdminController {
                 HttpStatus.OK);
     }
 
-    // TODO add scripts to users in these functions
-    // TODO add new script to this admin
-
     @RequestMapping(value = "add_count_script")
     public ResponseEntity<?> addCountScript(@RequestBody CountContactScriptDto countDto) {
         Map<String, String> response = new HashMap<>();
 
-        if (userRepository.findById(countDto.getId1()).orElse(null) == null ||
-            userRepository.findById(countDto.getId2()).orElse(null) == null) {
+        User u1 = userRepository.findById(countDto.getId1()).orElse(null),
+                u2 = userRepository.findById(countDto.getId2()).orElse(null);
+
+        if (u1 == null || u2 == null) {
             response.put("status", "invalid users id");
             return ResponseEntity.ok(response);
         }
 
-        scriptRepository.save(new CountContactScript(countDto));
+        BaseScript script = new CountContactScript(countDto, u1, u2);
+        scriptRepository.save(script);
+
+        u1.addScript(script);
+        userRepository.save(u1);
+        u2.addScript(script);
+        userRepository.save(u2);
 
         response.put("status", "OK");
         response.put("script_name", countDto.getScriptName());
@@ -232,6 +236,8 @@ public class AdminController {
     public ResponseEntity<?> editCountScript(@RequestParam(name = "id") Long id,
                                       @RequestBody CountContactScriptDto countDto) {
         BaseScript script = scriptRepository.findById(id).orElse(null);
+        User u1 = userRepository.findById(countDto.getId1()).orElse(null),
+                u2 = userRepository.findById(countDto.getId2()).orElse(null);
         Map<String, String> response = new HashMap<>();
 
         if (script == null) {
@@ -242,12 +248,30 @@ public class AdminController {
             response.put("status", "cannot convert script to CountContactScript by id:" + id);
             return ResponseEntity.ok(response);
         }
+        if (u1 == null || u2 == null) {
+            response.put("status", "invalid users id");
+            return ResponseEntity.ok(response);
+        }
+
+        for (User user : script.getUsers()) {
+            user.removeScript(script);
+            userRepository.save(user);
+        }
+        script.setUsers(new HashSet<>());
 
         script.setScriptName(countDto.getScriptName());
         script.setId1(countDto.getId1());
         script.setId2(countDto.getId2());
         ((CountContactScript) script).setCount(0L);
+        script.addUser(u1);
+        script.addUser(u2);
+
         scriptRepository.save(script);
+
+        u1.addScript(script);
+        userRepository.save(u1);
+        u2.addScript(script);
+        userRepository.save(u2);
 
         response.put("status", "OK");
         response.put("script_name", script.getScriptName());
@@ -258,8 +282,10 @@ public class AdminController {
     public ResponseEntity<?> addIntervalScript(@RequestBody TimeIntervalContactScriptDto scriptDto) {
         Map<String, String> response = new HashMap<>();
 
-        if (userRepository.findById(scriptDto.getId1()).orElse(null) == null ||
-                userRepository.findById(scriptDto.getId2()).orElse(null) == null) {
+        User u1 = userRepository.findById(scriptDto.getId1()).orElse(null),
+                u2 = userRepository.findById(scriptDto.getId2()).orElse(null);
+
+        if (u1 == null || u2 == null) {
             response.put("status", "invalid users id");
             return ResponseEntity.ok(response);
         }
@@ -268,7 +294,13 @@ public class AdminController {
             return ResponseEntity.ok(response);
         }
 
-        scriptRepository.save(new TimeIntervalContactScript(scriptDto));
+        BaseScript script = new TimeIntervalContactScript(scriptDto, u1, u2);
+        scriptRepository.save(script);
+
+        u1.addScript(script);
+        userRepository.save(u1);
+        u2.addScript(script);
+        userRepository.save(u2);
 
         response.put("status", "OK");
         response.put("script_name", scriptDto.getScriptName());
@@ -279,6 +311,8 @@ public class AdminController {
     public ResponseEntity<?> editIntervalScript(@RequestParam(name = "id") Long id,
                                              @RequestBody TimeIntervalContactScriptDto scriptDto) {
         BaseScript script = scriptRepository.findById(id).orElse(null);
+        User u1 = userRepository.findById(scriptDto.getId1()).orElse(null),
+                u2 = userRepository.findById(scriptDto.getId2()).orElse(null);
         Map<String, String> response = new HashMap<>();
 
         if (script == null) {
@@ -289,6 +323,16 @@ public class AdminController {
             response.put("status", "cannot convert script to TimeIntervalContactScript by id:" + id);
             return ResponseEntity.ok(response);
         }
+        if (u1 == null || u2 == null) {
+            response.put("status", "invalid users id");
+            return ResponseEntity.ok(response);
+        }
+
+        for (User user : script.getUsers()) {
+            user.removeScript(script);
+            userRepository.save(user);
+        }
+        script.setUsers(new HashSet<>());
 
         script.setScriptName(scriptDto.getScriptName());
         script.setId1(scriptDto.getId1());
@@ -296,7 +340,15 @@ public class AdminController {
         ((TimeIntervalContactScript) script).setFrom(scriptDto.getFrom());
         ((TimeIntervalContactScript) script).setTo(scriptDto.getTo());
         ((TimeIntervalContactScript) script).setSuccess(scriptDto.getSuccess());
+        script.addUser(u1);
+        script.addUser(u2);
+
         scriptRepository.save(script);
+
+        u1.addScript(script);
+        userRepository.save(u1);
+        u2.addScript(script);
+        userRepository.save(u2);
 
         response.put("status", "OK");
         response.put("script_name", script.getScriptName());
@@ -315,13 +367,15 @@ public class AdminController {
 
         User    u1 = userRepository.findById(script.getId1()).orElse(null),
                 u2 = userRepository.findById(script.getId2()).orElse(null);
-        if (u1 == null || u2 == null) {
-            response.put("status", "invalid users id");
-            return ResponseEntity.ok(response);
-        }
 
-        u1.removeScript(script);
-        u2.removeScript(script);
+        if (u1 != null) {
+            u1.removeScript(script);
+            userRepository.save(u1);
+        }
+        if (u2 != null) {
+            u2.removeScript(script);
+            userRepository.save(u2);
+        }
 
         scriptRepository.deleteById(id);
         response.put("status", "OK");
@@ -333,7 +387,7 @@ public class AdminController {
                                            @RequestParam(name = "script_id") Long script_id) {
         Map<String, String> response = new HashMap<>();
         if (userRepository.findById(user_id).orElse(null) == null ||
-                attrRepository.findById(script_id).orElse(null) == null) {
+                scriptRepository.findById(script_id).orElse(null) == null) {
             response.put("status", "No user or script with such id");
             return ResponseEntity.ok(response);
         }

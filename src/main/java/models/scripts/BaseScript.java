@@ -28,6 +28,18 @@ public class BaseScript extends BaseEntity {
     @ManyToMany(mappedBy = "scripts")
     private Set<User> users;
 
+    public void addUser(User user) {
+        if (!users.contains(user)) {
+            this.users.add(user);
+        }
+    }
+
+    public void removeUser(User user) {
+        if (users.contains(user)) {
+            this.users.remove(user);
+        }
+    }
+
     public static BaseScriptDto toChild(BaseScript script) {
         if (script instanceof CountContactScript) {
             return CountContactScriptDto.fromCountContactScript((CountContactScript) script);

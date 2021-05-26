@@ -2,10 +2,12 @@ package models.scripts;
 
 import dto.scripts.TimeIntervalContactScriptDto;
 import lombok.Data;
+import models.User;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import java.util.HashSet;
 
 @Entity
 @DiscriminatorValue("2")
@@ -31,13 +33,20 @@ public class TimeIntervalContactScript extends BaseScript {
         this.to = to;
         this.success = false;
     }
-    public TimeIntervalContactScript(TimeIntervalContactScriptDto dto) {
+    public TimeIntervalContactScript(TimeIntervalContactScriptDto dto, User u1, User u2) {
         super.scriptName = dto.getScriptName();
         super.id1 = dto.getId1();
         super.id2 = dto.getId2();
         this.from = dto.getFrom();
         this.to = dto.getTo();
         this.success = dto.getSuccess();
+        super.setUsers(new HashSet<>());
+        if (u1 != null) {
+            super.addUser(u1);
+        }
+        if (u2 != null) {
+            super.addUser(u2);
+        }
     }
 
     @Override

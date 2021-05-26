@@ -6,6 +6,7 @@ import dto.UserDto;
 import models.Attr;
 import models.Status;
 import models.User;
+import models.scripts.BaseScript;
 import models.scripts.CountContactScript;
 import models.scripts.TimeIntervalContactScript;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -150,6 +151,23 @@ public class TestController {
         user.addScript(scriptRepository.findById(1L).orElse(null));
         userRepository.save(user);
         return "OK";
+    }
+
+    @RequestMapping("add_user1_to_script1")
+    public String addUser1ToScript1() {
+        BaseScript script = scriptRepository.findById(1L).orElse(null);
+        script.addUser(userRepository.findById(1L).orElse(null));
+        scriptRepository.save(script);
+        return "OK";
+    }
+
+    @RequestMapping("all_users_with_scripts")
+    public String getAllUsersWithScripts() {
+        StringBuilder answer = new StringBuilder("");
+        for (BaseScript script : scriptRepository.findAll()) {
+            answer.append("scriptId: ").append(script.getId()).append("\n").append(script.getUsers().toString()).append("\n");
+        }
+        return answer.toString();
     }
 
     // =================================================
