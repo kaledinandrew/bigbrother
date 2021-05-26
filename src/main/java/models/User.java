@@ -73,9 +73,7 @@ public class User extends BaseEntity{
     }
 
     public void addScript(BaseScript toAdd) {
-        if (!scripts.contains(toAdd)) {
-            this.scripts.add(toAdd);
-        }
+        this.scripts.add(toAdd);
     }
 
     public void removeScript(BaseScript script) {

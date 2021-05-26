@@ -289,7 +289,7 @@ public class AdminController {
             response.put("status", "invalid users id");
             return ResponseEntity.ok(response);
         }
-        if (scriptDto.getFrom() <= 0 || scriptDto.getTo() <= 0) {
+        if (scriptDto.getFrom() <= 0 || scriptDto.getTo() <= 0 || scriptDto.getTo() < scriptDto.getFrom()) {
             response.put("status", "invalid from or to field");
             return ResponseEntity.ok(response);
         }

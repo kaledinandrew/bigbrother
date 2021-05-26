@@ -31,6 +31,8 @@ public class UserCreateDto {
         user.setPassword(new BCryptPasswordEncoder().encode(password));
 
         user.setRoles(new HashSet<>());
+        user.setAttrs(new HashSet<>());
+        user.setScripts(new HashSet<>());
         user.getRoles().add(role);
 
         user.setStatus(Status.ACTIVE);

@@ -8,12 +8,14 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import java.util.HashSet;
+import java.util.Objects;
 
 @Entity
 @DiscriminatorValue("2")
 @Data
 public class TimeIntervalContactScript extends BaseScript {
 
+    // Time in the format of UNIX Timestamp
     @Column(name = "time_from")
     private Long from;
 
@@ -62,4 +64,20 @@ public class TimeIntervalContactScript extends BaseScript {
                 '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TimeIntervalContactScript)) return false;
+        if (!super.equals(o)) return false;
+        TimeIntervalContactScript that = (TimeIntervalContactScript) o;
+        return Objects.equals(from, that.from)
+                && Objects.equals(to, that.to)
+                && Objects.equals(success, that.success)
+                && super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), from, to, success);
+    }
 }

@@ -8,6 +8,7 @@ import models.BaseEntity;
 import models.User;
 
 import javax.persistence.*;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -47,5 +48,23 @@ public class BaseScript extends BaseEntity {
             return TimeIntervalContactScriptDto.fromTimeIntervalContactScript((TimeIntervalContactScript) script);
         }
         return null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        BaseScript script = (BaseScript) o;
+        return Objects.equals(scriptName, script.scriptName) &&
+                Objects.equals(id1, script.id1) &&
+                Objects.equals(id2, script.id2)  &&
+                Objects.equals(super.id, script.getId()) &&
+                super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), super.id, scriptName, id1, id2);
     }
 }

@@ -9,6 +9,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.util.HashSet;
+import java.util.Objects;
 
 @Entity
 @DiscriminatorValue("1")
@@ -41,6 +42,10 @@ public class CountContactScript extends BaseScript {
         }
     }
 
+    public void incrementCount() {
+        this.count++;
+    }
+
     @Override
     public String toString() {
         return "CountContactsScript{" +
@@ -50,5 +55,19 @@ public class CountContactScript extends BaseScript {
                 ", id2=" + id2 +
                 ", count=" + count +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CountContactScript)) return false;
+        if (!super.equals(o)) return false;
+        CountContactScript script = (CountContactScript) o;
+        return Objects.equals(count, script.count) && super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), count);
     }
 }

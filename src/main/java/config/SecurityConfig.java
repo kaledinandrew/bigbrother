@@ -22,6 +22,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String USER_ENDPOINT = "/user/**";
     private static final String LOGIN_ENDPOINT = "/auth/**";
     private static final String ALL_ENDPOINT = "/all/**";
+    private static final String CONTACT_ENDPOINT = "/contact/**";
 
     @Autowired
     public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
@@ -46,7 +47,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(SUPER_ADMIN_ENDPOINT).hasRole("SUPER_ADMIN")
                 .antMatchers(ADMIN_ENDPOINT).hasRole("ADMIN")
                 .antMatchers(USER_ENDPOINT).hasRole("USER")
+                .antMatchers(CONTACT_ENDPOINT).hasRole("USER")
+                .antMatchers(CONTACT_ENDPOINT).hasRole("ADMIN")
                 .antMatchers(ALL_ENDPOINT).permitAll()
+                // TODO check
                 // .anyRequest().authenticated()
                 .anyRequest().permitAll()
                 .and()
