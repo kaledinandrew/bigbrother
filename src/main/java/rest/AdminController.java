@@ -185,12 +185,13 @@ public class AdminController {
     public ResponseEntity<?> addAttrToUser(@RequestParam(name = "user_id") Long user_id,
                                            @RequestParam(name = "attr_id") Long attr_id) {
         Map<String, String> response = new HashMap<>();
-        if (userRepository.findById(user_id).isEmpty() || attrRepository.findById(attr_id).isEmpty()) {
+        if (userRepository.findById(user_id).orElse(null) == null ||
+                attrRepository.findById(attr_id).orElse(null) == null) {
             response.put("status", "No user or attr with such id");
             return ResponseEntity.ok(response);
         }
-        User user = userRepository.findById(user_id).get();
-        Attr attr = attrRepository.findById(attr_id).get();
+        User user = userRepository.findById(user_id).orElse(null);
+        Attr attr = attrRepository.findById(attr_id).orElse(null);
 
         user.addAttr(attr);
         userRepository.save(user);
@@ -214,8 +215,8 @@ public class AdminController {
     public ResponseEntity<?> addCountScript(@RequestBody CountContactScriptDto countDto) {
         Map<String, String> response = new HashMap<>();
 
-        if (userRepository.findById(countDto.getId1()).isEmpty() ||
-            userRepository.findById(countDto.getId2()).isEmpty()) {
+        if (userRepository.findById(countDto.getId1()).orElse(null) == null ||
+            userRepository.findById(countDto.getId2()).orElse(null) == null) {
             response.put("status", "invalid users id");
             return ResponseEntity.ok(response);
         }
@@ -257,8 +258,8 @@ public class AdminController {
     public ResponseEntity<?> addIntervalScript(@RequestBody TimeIntervalContactScriptDto scriptDto) {
         Map<String, String> response = new HashMap<>();
 
-        if (userRepository.findById(scriptDto.getId1()).isEmpty() ||
-                userRepository.findById(scriptDto.getId2()).isEmpty()) {
+        if (userRepository.findById(scriptDto.getId1()).orElse(null) == null ||
+                userRepository.findById(scriptDto.getId2()).orElse(null) == null) {
             response.put("status", "invalid users id");
             return ResponseEntity.ok(response);
         }
@@ -331,7 +332,8 @@ public class AdminController {
     public ResponseEntity<?> addScriptToUser(@RequestParam(name = "user_id") Long user_id,
                                            @RequestParam(name = "script_id") Long script_id) {
         Map<String, String> response = new HashMap<>();
-        if (userRepository.findById(user_id).isEmpty() || attrRepository.findById(script_id).isEmpty()) {
+        if (userRepository.findById(user_id).orElse(null) == null ||
+                attrRepository.findById(script_id).orElse(null) == null) {
             response.put("status", "No user or script with such id");
             return ResponseEntity.ok(response);
         }
