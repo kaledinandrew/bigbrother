@@ -47,8 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(SUPER_ADMIN_ENDPOINT).hasRole("SUPER_ADMIN")
                 .antMatchers(ADMIN_ENDPOINT).hasRole("ADMIN")
                 .antMatchers(USER_ENDPOINT).hasRole("USER")
-                .antMatchers(CONTACT_ENDPOINT).hasRole("USER")
-                .antMatchers(CONTACT_ENDPOINT).hasRole("ADMIN")
+                .antMatchers(CONTACT_ENDPOINT).hasAnyRole("USER", "ADMIN")
                 .antMatchers(ALL_ENDPOINT).permitAll()
                 // TODO check
                 // .anyRequest().authenticated()

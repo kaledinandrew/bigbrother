@@ -10,8 +10,10 @@ import models.scripts.BaseScript;
 import models.scripts.CountContactScript;
 import models.scripts.TimeIntervalContactScript;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import repositories.*;
 
@@ -175,5 +177,14 @@ public class TestController {
     @RequestMapping(value = "return_error")
     public ResponseEntity<List<AttrDto>> getAllAttrs() {
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+    }
+
+    // =================================================
+
+    @RequestMapping(value = "get_username_from_token")
+    public String getUsernameFromToken(Authentication authentication) {
+        return authentication.getName() +
+                "\nCredentials: " + authentication.getCredentials().toString() +
+                "\nPrincipal: " + authentication.getPrincipal();
     }
 }

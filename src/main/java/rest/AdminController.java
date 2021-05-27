@@ -13,6 +13,7 @@ import models.scripts.TimeIntervalContactScript;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import repositories.AttrRepository;
 import repositories.BaseScriptRepository;
@@ -196,6 +197,20 @@ public class AdminController {
         userRepository.save(user);
         response.put("status", "OK");
         return ResponseEntity.ok(response);
+    }
+
+    @RequestMapping(value = "all_users_with_attr")
+    public ResponseEntity<?> getAllUsersWithAttr(@RequestParam(name = "attr_id") Long attr_id) {
+        Attr attr = attrRepository.findById(attr_id).orElse(null);
+        if (attr == null) {
+            Map<String, String> response = new HashMap<>();
+            response.put("status", "no attr with id: " + attr_id);
+            return ResponseEntity.ok(response);
+        }
+        return new ResponseEntity<>(
+                attr.getUsers().stream().map(UserDto::fromUser).collect(Collectors.toList()),
+                HttpStatus.OK
+        );
     }
 
     // SCRIPTS
