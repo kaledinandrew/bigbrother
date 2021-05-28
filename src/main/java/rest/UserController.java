@@ -24,19 +24,10 @@ import java.util.stream.Collectors;
 public class UserController {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private final AttrRepository attrRepository;
-    private final BaseScriptRepository scriptRepository;
 
     @Autowired
-    public UserController(UserRepository userRepository,
-                           RoleRepository roleRepository,
-                           AttrRepository attrRepository,
-                           BaseScriptRepository scriptRepository) {
+    public UserController(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.attrRepository = attrRepository;
-        this.scriptRepository = scriptRepository;
     }
 
     @GetMapping(value = "hello")

@@ -41,7 +41,7 @@ public class TimeIntervalContactScript extends BaseScript {
         super.id2 = dto.getId2();
         this.from = dto.getFrom();
         this.to = dto.getTo();
-        this.success = dto.getSuccess();
+        this.success = false;
         super.setUsers(new HashSet<>());
         if (u1 != null) {
             super.addUser(u1);

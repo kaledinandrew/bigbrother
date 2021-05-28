@@ -64,10 +64,12 @@ public class AdminController {
 
     // @GetMapping(value = "user")
     @RequestMapping(value = "user")
-    public ResponseEntity<UserDto> getUserById(@RequestParam(name = "id") Long id) {
+    public ResponseEntity<?> getUserById(@RequestParam(name = "id") Long id) {
         User user = userRepository.findById(id).orElse(null);
         if (user == null) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            Map<String, String> response = new HashMap<>();
+            response.put("status", "No admin with this id");
+            return ResponseEntity.ok(response);
         }
         UserDto result = UserDto.fromUser(user);
         return new ResponseEntity<>(result, HttpStatus.OK);
