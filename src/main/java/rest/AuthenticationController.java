@@ -57,25 +57,6 @@ public class AuthenticationController {
         return body.getUsername() + " " + body.getPassword();
     }
 
-    // TODO: permit only for admin or superadmin
-    @PostMapping("add_role")
-    public ResponseEntity<?> addRole(@RequestBody UserAddRoleDto body) {
-        User user = userService.findByUsername(body.getUsername());
-        Role role_admin = roleRepository.findByName("ROLE_ADMIN");
-        Role role_user = roleRepository.findByName("ROLE_USER");
-
-        if (body.getRole().equals("admin")       && !user.getRoles().contains(role_admin)) {
-            user.getRoles().add(role_admin);
-        } else if (body.getRole().equals("user") && !user.getRoles().contains(role_user)) {
-            user.getRoles().add(role_user);
-        }
-
-        userRepository.save(user);
-        Map<String, String> response = new HashMap<>();
-        response.put("status", "OK");
-        return ResponseEntity.ok(response);
-    }
-
     @PostMapping("sign_up")
     public ResponseEntity<?> signUp(@RequestBody UserCreateDto userCreateDto) {
         String username = userCreateDto.getUsername();
