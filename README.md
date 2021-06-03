@@ -2,6 +2,12 @@
 
 Spring REST API for course project at HSE
 
+## Setup
+
+For running server on your device follow link: https://drive.google.com/file/d/1zqKgY1sKSbxoCql_gsOp2Gy3lUuk4YAy/view?usp=sharing
+
+Download bigbrother.jar and run it: java -jar bigbrother.jar.
+
 ## JWT
 
 Authentication is done via Json Web Token. 
